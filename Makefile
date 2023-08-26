@@ -1,5 +1,17 @@
 MAKEFLAGS += --silent
 
+INTERNAL_BUILD_TYPE := Debug
+
+ifdef $$BUILD_TYPE
+	INTERNAL_BUILD_TYPE := $$BUILD_TYPE
+endif
+
+ifeq ($(OS),Windows_NT)
+    PARALLEL=--parallel
+else
+    PARALLEL=-j$(shell nproc)
+endif
+
 .PHONY: init help configure build clean build-tests test
 
 help: # Show help for each of the Makefile recipes.
@@ -13,7 +25,7 @@ install-hooks: # Install the Git hooks.
 	pre-commit install --hook-type commit-msg
 
 configure: # Configure the project with CMake.
-	cmake -Bbuild -S. -DREMUS_BUILD_TESTING=ON
+	cmake -Bbuild -S. -DREMUS_BUILD_TESTING=ON -DCMAKE_BUILD_TYPE=${INTERNAL_BUILD_TYPE}
 
 ifeq (build,$(firstword $(MAKECMDGOALS)))
   # use the rest as arguments for "run"
@@ -24,16 +36,16 @@ endif
 
 build: configure # Build the project with CMake. Usage: make build [target]
 ifeq (all,$(BUILD_TARGET))
-	cmake --build build -- -j$(shell nproc)
+	cmake --build build --config ${INTERNAL_BUILD_TYPE} -- ${PARALLEL}
 else
-	cmake --build build --target $(BUILD_TARGET) --parallel
+	cmake --build build --config ${INTERNAL_BUILD_TYPE}  --target $(BUILD_TARGET) ${PARALLEL}
 endif
 
 clean: # Clean the project with CMake.
 	rm -r build
 
 build-tests: configure # Build the tests with CMake.
-	cmake --build build --target remus__tests --parallel
+	cmake --build build --config ${INTERNAL_BUILD_TYPE} --target remus__tests ${PARALLEL}
 
 test: build-tests # Run the tests with CTest.
-	ctest --test-dir build --output-on-failure
+	ctest -C ${INTERNAL_BUILD_TYPE} --test-dir build --output-on-failure
