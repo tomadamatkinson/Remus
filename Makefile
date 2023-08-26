@@ -23,13 +23,17 @@ ifeq (build,$(firstword $(MAKECMDGOALS)))
 endif
 
 build: configure # Build the project with CMake. Usage: make build [target]
-	cmake --build build --target $(BUILD_TARGET) -- -j$(shell nproc)
+ifeq (all,$(BUILD_TARGET))
+	cmake --build build -- -j$(shell nproc)
+else
+	cmake --build build --target $(BUILD_TARGET) --parallel
+endif
 
 clean: # Clean the project with CMake.
 	rm -r build
 
 build-tests: configure # Build the tests with CMake.
-	cmake --build build --target remus__tests -- -j$(shell nproc)
+	cmake --build build --target remus__tests --parallel
 
 test: build-tests # Run the tests with CTest.
 	ctest --test-dir build --output-on-failure
