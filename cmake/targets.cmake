@@ -26,7 +26,7 @@ add_custom_target(remus__tests)
 
 macro(configure_remus_test)
     message(STATUS "Test ${ARGV0}")
-    set_target_properties(${ARGV0} PROPERTIES 
+    set_target_properties(${ARGV0} PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
         ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/test"
