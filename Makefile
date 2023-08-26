@@ -10,6 +10,7 @@ init: # Initialize the repository.
 
 install-hooks: # Install the Git hooks.
 	pre-commit install
+	pre-commit install --hook-type commit-msg
 
 configure: # Configure the project with CMake.
 	cmake -Bbuild -S. -DREMUS_BUILD_TESTING=ON
