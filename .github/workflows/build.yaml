@@ -1,5 +1,8 @@
 name: Build
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
 on:
   pull_request:
     branches: [main]
@@ -17,6 +20,12 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
+
+      - if: matrix.os == 'ubuntu-latest'
+        name: Install libxrandr-dev
+        run: |
+          sudo apt-get update
+          sudo apt-get install libxrandr-dev
 
       - name: Set up CMake
         run: make init
