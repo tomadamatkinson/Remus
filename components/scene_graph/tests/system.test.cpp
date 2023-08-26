@@ -11,7 +11,7 @@ class IncrementSystem final : public remus::System
 {
   public:
 	virtual ~IncrementSystem() override = default;
-	IncrementSystem()           = default;
+	IncrementSystem()                   = default;
 	IncrementSystem(int increment_amount) :
 	    increment_amount(increment_amount)
 	{}
@@ -39,6 +39,38 @@ TEST_CASE("Add a system", "[scene_graph]")
 	// Add a system to the scene graph again. This should fail.
 	// The system already exists.
 	REQUIRE(scene_graph.add_system<IncrementSystem>() == false);
+}
+
+TEST_CASE("Remove a system", "[scene_graph]")
+{
+	remus::SceneGraph scene_graph;
+
+	// Add a system to the scene graph. This should succeed.
+	REQUIRE(scene_graph.add_system<IncrementSystem>() == true);
+
+	// Remove the system from the scene graph. This should succeed.
+	REQUIRE(scene_graph.remove_system<IncrementSystem>() == true);
+
+	// Remove the system from the scene graph again. This should fail.
+	// The system does not exist.
+	REQUIRE(scene_graph.remove_system<IncrementSystem>() == false);
+}
+
+TEST_CASE("Has system", "[scene_graph]")
+{
+	remus::SceneGraph scene_graph;
+
+	// Add a system to the scene graph. This should succeed.
+	REQUIRE(scene_graph.add_system<IncrementSystem>() == true);
+
+	// Check if the system exists. This should succeed.
+	REQUIRE(scene_graph.has_system<IncrementSystem>() == true);
+
+	// Remove the system from the scene graph. This should succeed.
+	REQUIRE(scene_graph.remove_system<IncrementSystem>() == true);
+
+	// Check if the system exists. This should fail.
+	REQUIRE(scene_graph.has_system<IncrementSystem>() == false);
 }
 
 TEST_CASE("Update a system", "[scene_graph]")

@@ -45,6 +45,18 @@ class SceneGraph final
 		return add_system(typeid(T), std::make_shared<T>(args...));
 	}
 
+	template <typename T>
+	bool remove_system()
+	{
+		return systems.erase(typeid(T)) > 0;
+	}
+
+	template <typename T>
+	bool has_system()
+	{
+		return systems.find(typeid(T)) != systems.end();
+	}
+
 	void update(float delta_time);
 
   private:
