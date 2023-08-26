@@ -1,0 +1,8 @@
+find_program(CLANG_TIDY_EXE NAMES "clang-tidy")
+if(CLANG_TIDY_EXE)
+    message(STATUS "clang-tidy found.")
+    set(CLANG_TIDY_COMMAND "${CLANG_TIDY_EXE}" "-checks=-*,clang-analyzer-*,-clang-analyzer-cplusplus*,-warnings-as-errors=*" PARENT_SCOPE)
+else()
+    set(CLANG_TIDY_COMMAND "" PARENT_SCOPE)
+    message(STATUS "clang-tidy not found.")
+endif()

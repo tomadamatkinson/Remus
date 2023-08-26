@@ -1,0 +1,4 @@
+for FILE in $(git diff --cached --name-only)
+do
+        clang-format -i $FILE
+done
