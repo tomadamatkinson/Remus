@@ -12,7 +12,7 @@ else
     PARALLEL=-j$(shell nproc)
 endif
 
-.PHONY: init help configure build clean build-tests test remus
+.PHONY: init help configure build clean build-tests test pre-commit
 
 help: # Show help for each of the Makefile recipes.
 	@grep -E '^[a-zA-Z0-9 -]+:.*#'  Makefile | sort | while read -r l; do printf "\033[1;32m$$(echo $$l | cut -f 1 -d':')\033[00m:$$(echo $$l | cut -f 2- -d'#')\n"; done
@@ -46,3 +46,6 @@ clean: # Clean the project with CMake.
 
 test: build-tests # Run the tests with CTest.
 	ctest -C ${INTERNAL_BUILD_TYPE} --test-dir build --output-on-failure
+
+pre-commit: # Run the pre-commit checks.
+	pre-commit run --all-files
