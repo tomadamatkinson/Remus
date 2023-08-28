@@ -33,6 +33,6 @@ macro(configure_remus_test)
         CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}"
     )
     target_link_libraries(${ARGV0} PRIVATE Catch2::Catch2WithMain)
-    add_test(NAME ${ARGV0} COMMAND ${ARGV0})
+    add_test(NAME ${ARGV0} COMMAND ${ARGV0} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
     add_dependencies(remus__tests ${ARGV0})
 endmacro(configure_remus_test)
