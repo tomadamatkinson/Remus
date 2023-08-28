@@ -51,6 +51,7 @@ void GlfwWindow::set_title(const char *title)
 
 void GlfwWindow::update()
 {
+	glfwSwapBuffers(m_window);
 	glfwPollEvents();
 }
 
