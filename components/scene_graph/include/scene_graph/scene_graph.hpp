@@ -6,6 +6,8 @@
 
 #include <entt/entt.hpp>
 
+#include "node.hpp"
+
 namespace remus
 {
 class Node;
@@ -33,7 +35,7 @@ class SceneGraph final
 	SceneGraph()  = default;
 	~SceneGraph() = default;
 
-	Node create_node();
+	SceneNodeRef create_node();
 
 	/*
 	 * Add a system to the scene graph.
@@ -59,103 +61,22 @@ class SceneGraph final
 
 	void update(float delta_time);
 
+	void print_scene_heirarchy(size_t spacing = 4) const;
+
+	entt::registry &registry()
+	{
+		return _registry;
+	}
+
   private:
-	entt::registry                                     registry;
+	entt::registry                                     _registry;
 	std::map<std::type_index, std::shared_ptr<System>> systems;
 
-	struct InternalNode
-	{
-		entt::entity handle;
-		SceneGraph  *owner;
-	};
-
-	std::vector<std::shared_ptr<InternalNode>> nodes;
+	std::vector<std::shared_ptr<SceneNode>> nodes;
 
 	bool add_system(const std::type_info &type_info, std::shared_ptr<System> &&system);
-};
 
-/* A node is a handle to an entity in the scene graph.
- * It is responsible for adding components to the entity.
- * It is responsible for removing components from the entity.
- * It is responsible for adding children to the entity.
- * It is responsible for rdemoving chilren from the entity.
- * It represents the transformation of the entity.
- */
-class Node
-{
-  public:
-	friend class remus::SceneGraph;
-
-	~Node() = default;
-
-	bool is_valid() const
-	{
-		return !internal.expired();
-	}
-
-	operator bool() const
-	{
-		return is_valid();
-	}
-
-	template <typename T, typename... Args>
-	T &emplace_component(Args &&...args)
-	{
-		if (auto ptr = internal.lock())
-		{
-			return ptr->owner->registry.emplace<T>(ptr->handle, std::forward<Args>(args)...);
-		}
-		throw std::runtime_error("Node is expired");
-	}
-
-	template <typename T>
-	T &add_component(const T &component = {})
-	{
-		if (auto ptr = internal.lock())
-		{
-			return ptr->owner->registry.emplace<T>(ptr->handle, component);
-		}
-		throw std::runtime_error("Node is expired");
-	}
-
-	template <typename T>
-	T &get_component()
-	{
-		if (auto ptr = internal.lock())
-		{
-			return ptr->owner->registry.get<T>(ptr->handle);
-		}
-		throw std::runtime_error("Node is expired");
-	}
-
-	template <typename T>
-	bool has_component()
-	{
-		if (auto ptr = internal.lock())
-		{
-			return ptr->owner->registry.all_of<T>(ptr->handle);
-		}
-		throw std::runtime_error("Node is expired");
-	}
-
-	template <typename T>
-	void remove_component()
-	{
-		if (auto ptr = internal.lock())
-		{
-			ptr->owner->registry.remove<T>(ptr->handle);
-		}
-		else
-		{
-			throw std::runtime_error("Node is expired");
-		}
-	}
-
-  private:
-	Node(std::weak_ptr<remus::SceneGraph::InternalNode> internal) :
-	    internal(internal)
-	{}
-
-	std::weak_ptr<remus::SceneGraph::InternalNode> internal;
+	// used by print_scene_heirarchy()
+	void print_node(SceneNode &node, int depth, size_t spacing) const;
 };
 }        // namespace remus

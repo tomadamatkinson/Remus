@@ -44,7 +44,8 @@ endif
 clean: # Clean the project with CMake.
 	rm -r build
 
-test: build-tests # Run the tests with CTest.
+test: # Run the tests with CTest.
+	make build remus__tests
 	ctest -C ${INTERNAL_BUILD_TYPE} --test-dir build --output-on-failure
 
 pre-commit: # Run the pre-commit checks.

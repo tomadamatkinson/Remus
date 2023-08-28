@@ -81,7 +81,7 @@ TEST_CASE("Update a system", "[scene_graph]")
 
 	auto node = scene_graph.create_node();
 
-	node.emplace_component<SystemData>();
+	node.add_component<SystemData>({0});
 
 	for (int i = 0; i < 10; i++)
 	{
