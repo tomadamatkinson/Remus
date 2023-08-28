@@ -1,10 +1,19 @@
 #include <common/logging.hpp>
 
+#include <platforms/desktop_platform.hpp>
+
 int main(int, char **)
 {
-	LOGI("Hello, world!");
-	LOGW("Hello, world!");
-	LOGE("Hello, world!");
-	LOGD("Hello, world!");
+	remus::DesktopPlatform platform;
+
+	auto window = platform.create_window("Remus", {800, 600});
+
+	while (true)
+	{
+		window->update();
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(16));
+	}
+
 	return 0;
 }
