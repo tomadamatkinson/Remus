@@ -9,6 +9,7 @@ target_link_libraries(
     remus__core
         INTERFACE
             spdlog::spdlog
+            glm
 )
 
 configure_remus_library(remus__core)
