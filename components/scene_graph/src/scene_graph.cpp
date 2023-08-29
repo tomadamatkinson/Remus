@@ -2,6 +2,8 @@
 
 #include <common/logging.hpp>
 
+DEFINE_LOGGER_IMPL(SceneGraph)
+
 namespace remus
 {
 SceneNodeRef SceneGraph::create_node()
@@ -31,11 +33,11 @@ void SceneGraph::print_node(SceneNode &node, int depth, size_t spacing) const
 {
 	if (depth == 0)
 	{
-		LOGI("Scene heirarchy: {}", node.name);
+		LOGI(SceneGraph, "Scene heirarchy: {}", node.name);
 	}
 
 	std::string indent(depth * spacing, ' ');
-	LOGI("{}| {}", indent, node.name);
+	LOGI(SceneGraph, "{}| {}", indent, node.name);
 	for (auto &child : node.children)
 	{
 		print_node(*child, depth + 1, spacing);
@@ -66,7 +68,7 @@ bool SceneGraph::add_system(const std::type_info &type_info, std::shared_ptr<Sys
 	{
 		if (system.first == type_info)
 		{
-			LOGW("System already exists: {}", type_info.name());
+			LOGW(SceneGraph, "System already exists: {}", type_info.name());
 			return false;
 		}
 	}

@@ -270,6 +270,11 @@ class RHI : public Buffers, public Images, public Shaders, public Primitives
 	RHI()          = default;
 	virtual ~RHI() = default;
 
+	RHI(const RHI &)            = delete;
+	RHI &operator=(const RHI &) = delete;
+	RHI(RHI &&)                 = delete;
+	RHI &operator=(RHI &&)      = delete;
+
 	virtual void submit(const CommandList &command_list) = 0;
 };
 }        // namespace rhi

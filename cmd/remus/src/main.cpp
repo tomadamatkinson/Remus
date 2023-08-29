@@ -1,9 +1,7 @@
 #include <common/logging.hpp>
 #include <platforms/desktop_platform.hpp>
-#include <rhi/opengl/rhi.hpp>
 #include <rhi/rhi.hpp>
-
-#include <glad/glad.h>
+#include <rhi/vulkan/rhi.hpp>
 
 // settings
 const unsigned int SCR_WIDTH  = 800;
@@ -34,18 +32,20 @@ int main(int, char **)
 {
 	using namespace remus::rhi;
 
+	remus::logging::init();
+
 	remus::DesktopPlatform platform;
 
 	auto window = platform.create_window("Remus", {800, 600});
 
-	std::shared_ptr<RHI> rhi = std::make_shared<remus::gl::RHI>();
+	std::shared_ptr<RHI> rhi = std::make_shared<remus::vulkan::RHI>();
 
-	ShaderProgramHandle program = ShaderProgramHandle::create();
+	// ShaderProgramHandle program = ShaderProgramHandle::create();
 
-	ShaderProgramInput input;
-	input.stages.push_back(ShaderStageInput{ShaderStage::Vertex, "main", {vertexShaderSource.begin(), vertexShaderSource.end()}});
-	input.stages.push_back(ShaderStageInput{ShaderStage::Fragment, "main", {fragmentShaderSource.begin(), fragmentShaderSource.end()}});
-	rhi->create_program(program, input);
+	// ShaderProgramInput input;
+	// input.stages.push_back(ShaderStageInput{ShaderStage::Vertex, "main", {vertexShaderSource.begin(), vertexShaderSource.end()}});
+	// input.stages.push_back(ShaderStageInput{ShaderStage::Fragment, "main", {fragmentShaderSource.begin(), fragmentShaderSource.end()}});
+	// rhi->create_program(program, input);
 
 	BufferHandle vertex_handle = BufferHandle::create();
 
@@ -59,41 +59,39 @@ int main(int, char **)
 	rhi->create_buffer(vertex_handle, BufferCreateInfo{BufferUsage::Vertex, sizeof(Vertex) * vertices.size()});
 	rhi->update_buffer(vertex_handle, vertices);
 
-	BufferHandle index_handle = BufferHandle::create();
+	// BufferHandle index_handle = BufferHandle::create();
 
-	std::vector<uint> indices{
-	    0, 1, 3,        // first Triangle
-	    1, 2, 3         // second Triangle
-	};
+	// std::vector<uint> indices{
+	//     0, 1, 3,        // first Triangle
+	//     1, 2, 3         // second Triangle
+	// };
 
-	rhi->create_buffer(index_handle, BufferCreateInfo{BufferUsage::Index, sizeof(uint) * indices.size()});
-	rhi->update_buffer(index_handle, indices);
+	// rhi->create_buffer(index_handle, BufferCreateInfo{BufferUsage::Index, sizeof(uint) * indices.size()});
+	// rhi->update_buffer(index_handle, indices);
 
-	PrimitiveHandle primitive = PrimitiveHandle::create();
+	// PrimitiveHandle primitive = PrimitiveHandle::create();
 
-	PrimitiveCreateInfo primitive_input;
-	primitive_input.index_buffer_handle = index_handle;
-	primitive_input.vertex_attribute_bindings.emplace_back(VertexAttributeBinding{0, 3, sizeof(Vertex), 0, vertex_handle});
+	// PrimitiveCreateInfo primitive_input;
+	// primitive_input.index_buffer_handle = index_handle;
+	// primitive_input.vertex_attribute_bindings.emplace_back(VertexAttributeBinding{0, 3, sizeof(Vertex), 0, vertex_handle});
 
-	rhi->create_primitive(primitive, primitive_input);
+	// rhi->create_primitive(primitive, primitive_input);
 
-	while (true)
-	{
-		auto extent = window->get_extent();
-		glViewport(0, 0, extent.width, extent.height);
+	// while (true)
+	// {
+	// 	auto extent = window->get_extent();
 
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+	// 	CommandListBuilder builder;
+	// 	builder.add<DrawCommand>(program, primitive, 6, 0);
 
-		CommandListBuilder builder;
-		builder.add<DrawCommand>(program, primitive, 6, 0);
+	// 	rhi->submit(builder.release());
 
-		rhi->submit(builder.release());
+	// 	window->update();
 
-		window->update();
+	// 	std::this_thread::sleep_for(std::chrono::milliseconds(16));
+	// }
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(16));
-	}
+	rhi->destroy_buffer(vertex_handle);
 
 	return 0;
 }

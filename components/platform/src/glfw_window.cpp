@@ -6,6 +6,8 @@
 
 #include <common/logging.hpp>
 
+DEFINE_LOGGER_IMPL(GlfwWindow)
+
 namespace remus
 {
 GlfwWindow::GlfwWindow(const char *title, const Extent2D &extent)
@@ -20,11 +22,11 @@ GlfwWindow::GlfwWindow(const char *title, const Extent2D &extent)
 #endif
 
 	m_window = glfwCreateWindow(extent.width, extent.height, title, nullptr, nullptr);
-	LOG_ASSERT(m_window == nullptr, "Failed to create GLFW window");
+	LOG_CHECK(GlfwWindow, m_window == nullptr, "Failed to create GLFW window");
 
 	glfwMakeContextCurrent(m_window);
 
-	LOG_ASSERT(!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress), "Failed to initialize GLAD");
+	LOG_CHECK(GlfwWindow, !gladLoadGLLoader((GLADloadproc) glfwGetProcAddress), "Failed to initialize GLAD");
 }
 
 GlfwWindow::~GlfwWindow()
