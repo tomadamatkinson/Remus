@@ -9,6 +9,8 @@
 #include <glm/gtx/matrix_decompose.hpp>
 #include <tiny_gltf.h>
 
+DEFINE_LOGGER_IMPL(GLtfLoader)
+
 namespace remus
 {
 inline AttributeType to_attribute_type(const std::string &tiny_gltf_attribute)
@@ -28,7 +30,7 @@ inline AttributeType to_attribute_type(const std::string &tiny_gltf_attribute)
 
 #undef CASE
 
-	LOG_ASSERT(false, "Unsupported attribute type: {}", tiny_gltf_attribute);
+	LOG_CHECK(GLtfLoader, true, "Unsupported attribute type: {}", tiny_gltf_attribute);
 	return AttributeType::POSITION;
 }
 
@@ -44,7 +46,7 @@ inline PrimitiveTopology to_primitive_topology(int tiny_gltf_mode)
 			return PrimitiveTopology::POINTS;
 
 		default:
-			LOG_ASSERT(false, "Unsupported primitive topology: {}", tiny_gltf_mode);
+			LOG_CHECK(GLtfLoader, true, "Unsupported primitive topology: {}", tiny_gltf_mode);
 			return PrimitiveTopology::TRIANGLES;
 	}
 }
@@ -77,17 +79,17 @@ SceneNodeRef GLtfLoader::load(const std::string &path, SceneGraph &scene_graph) 
 
 	if (!warning.empty())
 	{
-		LOGW("GLTF loader: {}", warning);
+		LOGW(GLtfLoader, "GLTF loader: {}", warning);
 	}
 
 	if (!error.empty())
 	{
-		LOGE("GLTF loader: {}", error);
+		LOGE(GLtfLoader, "GLTF loader: {}", error);
 	}
 
 	if (!ret)
 	{
-		LOGE("GLTF loader: Failed to parse glTF");
+		LOGE(GLtfLoader, "GLTF loader: Failed to parse glTF");
 		return {};
 	}
 
